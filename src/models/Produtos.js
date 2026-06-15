@@ -88,7 +88,7 @@ export class Produtos {
 
   #validarIdCategoria(value) {
     if (!value || isNaN(value) || Number(value) <= 0) {
-      throw new Error("O valor do IdCategoria nao corresponde ao esperado");
+      throw new Error("O valor do IdCategoria não corresponde ao esperado");
     }
   }
 
@@ -130,7 +130,7 @@ export class Produtos {
       dados.preco,
       dados.Imagem,
       dados.estoque,
-      null,
+      null
     );
   }
 
@@ -142,7 +142,7 @@ export class Produtos {
       dados.preco,
       dados.Imagem,
       dados.estoque,
-      id,
+      id
     );
   }
 }

@@ -16,12 +16,13 @@ export class Pedido {
   }
 
   get subTotal() {
-    // Retorna o subtotal validado do pedido.
     return this.#subtotal;
   }
+
   get status() {
     return this.#status;
   }
+
   get dataCad() {
     return this.#dataCad;
   }
@@ -31,14 +32,17 @@ export class Pedido {
     this.#validarId(value);
     return (this.#id = value);
   }
+
   set subTotal(value) {
     this.#validarSubTotal(value);
     return (this.#subtotal = value);
   }
+
   set status(value) {
     this.#validarStatus(value);
     return (this.#status = value);
   }
+  
   // Métodos auxiliares //
   #validarId(value) {
     if (!value && value < 0) {

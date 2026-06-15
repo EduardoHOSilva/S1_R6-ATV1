@@ -13,8 +13,7 @@ const pedidoRepositories = {
       const [rowsPedido] = await conn.execute(sqlPedido, valuesPedido);
 
       for (const item of itemPed) {
-        const sqlCheckProduto =
-          "SELECT idProduto FROM produtos WHERE idProduto = ?;";
+        const sqlCheckProduto = "SELECT idProduto FROM produtos WHERE idProduto = ?;";
         const [produtoRows] = await conn.execute(sqlCheckProduto, [item.idProduto]);
 
         if (!produtoRows.length) {

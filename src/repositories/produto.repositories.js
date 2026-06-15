@@ -13,16 +13,8 @@ const produtoRepositories = {
     return rows;
   },
   criar: async produto => {
-    const sql =
-      "INSERT INTO produtos (idCategoria,nome,descricao,preco,Imagem,estoque) VALUES (?,?,?,?,?,?);";
-    const values = [
-      produto.idCategoria,
-      produto.nome,
-      produto.descricao,
-      produto.preco,
-      produto.Imagem,
-      produto.estoque,
-    ];
+    const sql = "INSERT INTO produtos (idCategoria, nome, descricao, preco, Imagem, estoque) VALUES (?,?,?,?,?,?);";
+    const values = [produto.idCategoria, produto.nome, produto.descricao, produto.preco, produto.Imagem, produto.estoque];
     const [rows] = await connection.execute(sql, values);
     return rows;
   },
