@@ -11,10 +11,10 @@ const imagemProduto = {
       const caminhoAbsoluto = path.join(
         __dirname,
         "../../uploads/images/",
-        nome
-      ); 
+        nome,
+      );
 
-      return res.sendFile(caminhoAbsoluto, (error) => {
+      return res.sendFile(caminhoAbsoluto, error => {
         if (error) {
           res.status(404).json({message: "Imagem nao encontrada"});
         }
@@ -23,6 +23,7 @@ const imagemProduto = {
       console.log(error);
       return res.status(500).json({message: "Ocorreu um erro no servidor"});
     }
-  }
+  },
 };
+
 export default imagemProduto;

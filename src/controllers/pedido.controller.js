@@ -4,18 +4,24 @@ import { ItensPedido } from "../models/Item_Pedido.js";
 import { statusPedido } from "../enum/statusPedido.enum.js";
 
 const pedidoController = {
+  // Controller de pedidos: encaminha requisições HTTP ao repositório
+  // e formata respostas JSON adequadas.
   listarPedidos: async (req, res) => {
     try {
       const result = await pedidoRepositories.listarPedidos();
 
       if (result.length === 0) {
-        return res.status(200).json({message: "Essa tabela não contem registros"});
+        return res.status(200).json({
+          Message: "Essa tabela não contem registros",
+        });
       }
 
       res.status(201).json({ result });
     } catch (error) {
       console.log(error);
-      res.status(500).json({message: "Ocorreu um erro no servidor"});
+      res.status(500).json({
+        message: "Ocorreu um erro no servidor",
+      });
     }
   },
 
@@ -25,13 +31,17 @@ const pedidoController = {
       const result = await pedidoRepositories.listarIDPedido(id);
 
       if (result.length === 0) {
-        return res.status(200).json({message: "Esse ID não contem registro!"});
+        return res.status(200).json({
+          Message: "Esse ID não contem registro!",
+        });
       }
 
       res.status(201).json({ result });
     } catch (error) {
       console.log(error);
-      res.status(500).json({message: "Ocorreu um erro no servidor"});
+      res.status(500).json({
+        message: "Ocorreu um erro no servidor",
+      });
     }
   },
 
@@ -39,28 +49,36 @@ const pedidoController = {
     try {
       const { itens } = req.body;
 
-      const itensPedido = itens.map((item) => {
+      // Converte cada item do payload em uma instância de model de item de pedido
+      const itensPedido = itens.map(item => {
         console.log("Itens:", item);
-
         return ItensPedido.criar({
           idProduto: item.idProduto,
-          estoque: item.estoque ?? item.quantidade,
-          valorItem: item.valorItem
+          quantidade: item.quantidade,
+          valorItem: item.valorItem,
         });
       });
 
       console.log(itensPedido);
 
+      // Calcula o subtotal usando a regra de negócio da model ItensPedido
       const subTotalItens = ItensPedido.calcularSubTotal(itensPedido);
 
-      const pedido = Pedido.criar({subTotal: subTotalItens, status: statusPedido.ABERTO});
+      // Cria o pedido com subtotal calculado e status inicial Aberto
+      const pedido = Pedido.criar({
+        subTotal: subTotalItens,
+        status: statusPedido.ABERTO,
+      });
 
       const result = await pedidoRepositories.criarPedido(pedido, itensPedido);
 
       return res.status(200).json({ result });
     } catch (error) {
       console.log(error);
-      res.status(500).json({message: "Ocorreu um erro no servidor", Error: error.message});
+      res.status(500).json({
+        message: "Ocorreu um erro no servidor",
+        Error: error.message,
+      });
     }
   },
 
@@ -131,6 +149,7 @@ const pedidoController = {
 
   // --- Itens Pedido --- //
   //
+
   listarItens: async (req, res) => {
     try {
       const id = Number(req.params.id);
@@ -173,24 +192,28 @@ const pedidoController = {
   },
   alterarItem: async (req, res) => {
     try {
-      const itemId = Number(req.params.id);
-      const { idProduto, estoque, valorItem } = req.body;
+      const itemId = Number(req.params.itemId ?? req.params.id);
+      const { idProduto, quantidade, valorItem } = req.body;
 
       // Cria uma instância de item de pedido atualizada antes de salvar
-      const item = ItensPedido.editar(
-        { idProduto, estoque, valorItem },
-        itemId,
-      );
-      const result = await pedidoRepositories.alterarItem(item);
+      const item = ItensPedido.editar({ idProduto, quantidade, valorItem }, itemId);
 
-      res.status(200).json({ result });
+      // Atualiza o item e obtém o pedidoId afetado
+      const { pedidoId } = await pedidoRepositories.alterarItem(itemId, item);
+
+      // Busca itens do pedido, calcula subtotal via model e valida antes de atualizar
+      const itensRows = await pedidoRepositories.listarItensPorPedido(pedidoId);
+      const itensParaCalculo = itensRows.map(r => ({ quantidade: r.quantidade, valorItem: Number(r.valorItem) }));
+      const novoSubtotal = ItensPedido.calcularSubTotal(itensParaCalculo);
+
+      await pedidoRepositories.atualizarSubtotalPedido(pedidoId, novoSubtotal);
+
+      return res.status(200).json({ pedidoId, novoSubtotal });
     } catch (error) {
       console.log(error);
-      res.status(500).json({
-        message: "Ocorreu um erro no servidor",
-      });
+      res.status(500).json({message: "Ocorreu um erro no servidor", error: error.message});
     }
-  },
+  }
 };
 
 export default pedidoController;

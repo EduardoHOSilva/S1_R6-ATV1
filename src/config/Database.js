@@ -93,7 +93,7 @@ export async function initializeDatabase() {
 );
   `);
     
-await tempConnection.query(`
+ await tempConnection.query(`
   CREATE TABLE itens_pedidos (
     idItensPedidos int NOT NULL AUTO_INCREMENT,
     idPedido INT NOT NULL,
