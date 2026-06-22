@@ -64,7 +64,7 @@ export class Categoria {
     }
   }
 
-   // Desing Pattern //
+  // Desing Pattern //
   static criar(dados) {
     return new Categoria(dados.nome, dados.descricao, null);
   }
@@ -72,5 +72,4 @@ export class Categoria {
   static editar(dados, id) {
     return new Categoria(dados.nome, dados.descricao, id);
   }
-
 };

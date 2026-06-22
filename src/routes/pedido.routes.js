@@ -3,7 +3,7 @@ import pedidoController from "../controllers/pedido.controller.js";
 
 const pedidoRoutes = Router();
 
-pedidoRoutes.post('/', pedidoController.registrar);
+pedidoRoutes.post('/', pedidoController.criar);
 pedidoRoutes.put('/remover/:idItemPedido', pedidoController.editarRemover);
 pedidoRoutes.put('/adicionar/:idPedido', pedidoController.editarAdicionar);
 pedidoRoutes.put('/editarQuantidade/:idItem', pedidoController.editarQuantidade);

@@ -1,6 +1,6 @@
-import { ItensPedido } from "../models/ItensPedido.js";
-import pedidoRepository from "../repositories/pedidoRepository.js";
-import { statusPedido } from "../enum/statusPedido.js";
+import { ItensPedido } from "../models/Item_Pedido.js";
+import pedidoRepository from "../repositories/pedido.repositories.js";
+import { statusPedido } from "../enum/statusPedido.enum.js";
 
 const pedidoController = {
   criar: async (req, res) => {

@@ -1,11 +1,11 @@
 import { Router } from "express";
-import categoriaRoutes from "./categoriaRoutes.js";
-import produtoRoutes from "./produtoRoutes.js";
-import pedidosRoutes from "./pedidosRoutes.js";
+import categoriaRoutes from "./categoria.routes.js";
+import produtoRoutes from "./produtos.routes.js";
+import pedidoRoutes from "./pedido.routes.js";
 
 const routes = Router();
 
-routes.use('/pedidos', pedidosRoutes);
+routes.use('/pedidos', pedidoRoutes);
 routes.use('/categorias', categoriaRoutes);
 routes.use('/produtos', produtoRoutes);
 

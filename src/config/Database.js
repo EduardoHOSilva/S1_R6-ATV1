@@ -57,8 +57,8 @@ export async function initializeDatabase() {
       idCategoria INT NOT NULL AUTO_INCREMENT,
       nome VARCHAR(50) NOT NULL,
       descricao VARCHAR(100) NOT NULL,
-      data_cad TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-      PRIMARY KEY (id)
+      dataCad TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      PRIMARY KEY (idCategoria)
       ) ENGINE=InnoDB;
     `);
     
@@ -71,7 +71,7 @@ export async function initializeDatabase() {
       estoque INT NOT NULL,
       Imagem VARCHAR(255) NOT NULL,
       dataCad TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-      PRIMARY KEY (idProduto, idCategoria),
+      PRIMARY KEY (idProduto),
       KEY fk_produtos_categorias_idx (idCategoria),
       CONSTRAINT fk_produtos_categorias FOREIGN KEY (idCategoria) REFERENCES categorias (idCategoria) ON DELETE NO ACTION ON UPDATE NO ACTION
       ) ENGINE=InnoDB;

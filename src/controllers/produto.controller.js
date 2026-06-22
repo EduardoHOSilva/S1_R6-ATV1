@@ -1,5 +1,5 @@
-import { Produto } from "../models/Produto.js";
-import produtoRepository from "../repositories/produtoRepository.js";
+import { Produtos } from "../models/Produtos.js";
+import produtoRepository from "../repositories/produto.repositories.js";
 
 const produtoController = {
   criar: async (req, res) => {
@@ -9,7 +9,7 @@ const produtoController = {
       const preco = Number(req.body.preco);
       const estoque = Number(req.body.estoque);
       const Imagem = `/uploads/images/${req.file.filename}`;
-      const produto = Produto.criar({ idCategoria, nome, preco, estoque, Imagem }); 
+      const produto = Produtos.criar({ idCategoria, nome, preco, estoque, Imagem }); 
       const resultado = await produtoRepository.criar(produto);
       
       res.status(201).json(resultado);

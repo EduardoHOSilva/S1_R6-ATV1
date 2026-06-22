@@ -1,5 +1,5 @@
 import { Categoria } from "../models/Categoria.js"
-import categoriaRepository from "../repositories/categoriaRepository.js";
+import categoriaRepository from "../repositories/categoria.repositories.js";
 
 const categoriaController = {
   criar: async (req, res) => {
