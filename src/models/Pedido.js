@@ -5,10 +5,11 @@ export class Pedido {
   #dataCad;
 
   // Contructor //
-  constructor(pSubTotal, pStatus, pID) {
+  constructor(pSubTotal, pStatus, pId, pIdCliente) {
     this.#subtotal = pSubTotal;
     this.#status = pStatus;
-    this.#id = pID;
+    this.idCliente = pIdCliente;
+    this.#id = pId;
   }
   // Getters //
   get id() {
@@ -21,10 +22,6 @@ export class Pedido {
 
   get status() {
     return this.#status;
-  }
-
-  get dataCad() {
-    return this.#dataCad;
   }
 
   // Setters //
@@ -44,30 +41,33 @@ export class Pedido {
   }
   
   // Métodos auxiliares //
-  #validarId(value) {
-    if (!value && value < 0) {
-      throw new Error("Verifique o ID informado.");
+  #validarId(value){
+    if(value <= 0 && value) {
+      throw new Error("Verifique o ID inserido!");
     }
   }
 
   #validarStatus(value) {
-    if (!value || typeof value !== "string") {
+    if(!value) {
       throw new Error("Status inválido.");
     }
   }
 
   #validarSubTotal(value) {
-    if (!value || value <= 0) {
+    console.log(value);
+
+    if(value < 0 || !value) {
       throw new Error("Não foi possivel obter o subtotal.");
     }
   }
 
-  //Desing Pattern
+  //Desing Pattern //
   static criar(dados) {
-    return new Pedido(dados.subTotal, dados.status, null);
+    console.log(dados.valortotal, dados.status);
+    return new Pedido(dados.valortotal, dados.status, null);
   }
 
-  static editar(dados, id) {
-    return new Pedido(null, dados.status, id);
+  static editar(dados) {
+    return new Pedido(dados.valortotal, dados.status, dados.id);
   }
 }

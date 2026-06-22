@@ -1,170 +1,121 @@
-import pedidoRepositories from "../repositories/pedido.repositories.js";
-import { Pedido } from "../models/Pedido.js";
-import { ItensPedido } from "../models/Item_Pedido.js";
-import { statusPedido } from "../enum/statusPedido.enum.js";
+import { ItensPedido } from "../models/ItensPedido.js";
+import pedidoRepository from "../repositories/pedidoRepository.js";
+import { statusPedido } from "../enum/statusPedido.js";
 
 const pedidoController = {
-  listarPedidos: async (req, res) => {
+  criar: async (req, res) => {
     try {
-      const result = await pedidoRepositories.listarPedidos();
-
-      if (result.length === 0) {
-        return res.status(200).json({message: "Essa tabela não contem registros."});
-      }
-
-      res.status(201).json({ result });
+      
+      let { itens } = req.body;
+      
+      const itensPedido = itens.map(item => ItensPedido.criar({ idProduto: item.idProduto, quantidade: item.quantidade, valorItem: item.valorItem})
+     );
+    
+     const subTotalItens = ItensPedido.calcularTotal(itensPedido); //função para criar na model
+     const pedido = { valorTotal: subTotalItens, status: statusPedido.ABERTO };
+     const resultado = await pedidoRepository.criar(pedido, itensPedido);
+    
+     return res.status(201).json({ resultado });
+  
     } catch (error) {
       console.log(error);
-      res.status(500).json({message: "Ocorreu um erro no servidor."});
+      res.status(500).json({ message: 'Erro no server', error: error.message });
     }
   },
-
-  listarIDPedidos: async (req, res) => {
+  
+  editarRemover: async (req, res) => {
     try {
-      const id = Number(req.params.id);
-      const result = await pedidoRepositories.listarIDPedido(id);
-
-      if (result.length === 0) {
-        return res.status(200).json({message: "Esse ID não contem registros."});
-      }
-
-      res.status(201).json({ result });
+      const idItemPedido = Number(req.params.idItemPedido);
+      
+      let resultItem = await pedidoRepository.recuperarItemPedido(idItemPedido);
+      let totalParaSubtrair = Number(resultItem.quantidade) * Number(resultItem.valor_item);
+      let resultPedido = await pedidoRepository.recuperarPedido(resultItem.id_pedido);
+      
+      const pedidoAtualizado = { id: resultPedido.id, valorTotal: (resultPedido.valor_total - totalParaSubtrair), status: resultPedido.status };
+      
+      const resultado = await pedidoRepository.editarRemover(pedidoAtualizado, idItemPedido);
+      
+      return res.status(200).json({ message: 'Item do pedido removido com sucesso', resultado });
+    
     } catch (error) {
       console.log(error);
-      res.status(500).json({message: "Ocorreu um erro no servidor."});
+      res.status(500).json({ message: 'Erro no server', error: error.message });
     }
   },
-
-  criarPedido: async (req, res) => {
+  
+  editarAdicionar: async (req, res) => {
     try {
-      const { itens } = req.body;
-
-      const itensPedido = itens.map(item => {
-        console.log("Itens:", item);
-        return ItensPedido.criar({ idProduto: item.idProduto, quantidade: item.quantidade, valorItem: item.valorItem});
-      });
-
-      console.log(itensPedido);
-
-      const subTotalItens = ItensPedido.calcularSubTotal(itensPedido);
-
-      const pedido = Pedido.criar({subTotal: subTotalItens, status: statusPedido.ABERTO});
-
-      const result = await pedidoRepositories.criarPedido(pedido, itensPedido);
-
-      return res.status(200).json({ result });
+      const idPedido = Number(req.params.idPedido);
+      const itemPedido = ItensPedido.criar({idProduto: req.body.idProduto, quantidade: req.body.quantidade, valorItem: req.body.valorItem});
+      
+      let resultPedido = await pedidoRepository.recuperarPedido(idPedido);
+      let totalParaSomar = itemPedido.quantidade * itemPedido.valorItem;
+      let totalFinal = Number(resultPedido.valor_total) + totalParaSomar;
+      
+      const pedidoAtualizado = { id: resultPedido.id, valorTotal: totalFinal, status: resultPedido.status };
+      const resultado = await pedidoRepository.editarAdicionar(pedidoAtualizado, itemPedido);
+      
+      return res.status(200).json({ message: 'Item do pedido adicionado com sucesso', resultado });
+    
     } catch (error) {
       console.log(error);
-      res.status(500).json({message: "Ocorreu um erro no servidor.", error: error.message});
+      res.status(500).json({ message: 'Erro no server', error: error.message });
     }
   },
-
-  atualizarPedido: async (req, res) => {
+  
+  editarQuantidade: async (req, res) => {
     try {
-      const id = Number(req.params.id);
+      const idItem = Number(req.params.idItem);
+      const quantidade = Number(req.body.quantidade);
+      
+      let resultItem = await pedidoRepository.recuperarItemPedido(idItem);
+      
+      console.log(resultItem);
+      
+      let totalAntigo = resultItem.quantidade * resultItem.valor_item;
+      let totalNovo = quantidade * resultItem.valor_item;
+      let diferenca = totalNovo - totalAntigo;
+      let resultPedido = await pedidoRepository.recuperarPedido(resultItem.id_pedido);
+      
+      const pedidoAtualizado = { id: resultPedido.id, valorTotal: (Number(resultPedido.valor_total) + Number(diferenca)), status: resultPedido.status };
+      
+      const itensPedidoAtualizados = { ...resultItem, quantidade }; //cria um novo objeto com as mesmas propriedades do item do pedido recuperado, mas com a quantidade atualizada
+
+      const resultado = await pedidoRepository.editarQuantidade(pedidoAtualizado, itensPedidoAtualizados, idItem);
+      
+      return res.status(200).json({ message: 'Quantidade do item do pedido atualizada com sucesso', resultado });
+    
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: 'Erro no server', error: error.message });
+    }
+  },
+  
+  editarStatus: async (req, res) => {
+    try {
+      const idPedido = Number(req.params.idPedido);
       const { status } = req.body;
-
-      const statusValidos = statusPedido;
-
-      if (
-        !status ||
-        (status !== statusValidos.ABERTO &&
-          status !== statusValidos.FINALIZADO &&
-          status !== statusValidos.PENDENTE)
-      ) {
-        return res.status(400).json({message: "Status inválido, informe Aberto, Finalizado ou Pendente"});
+      
+      if (status !== statusPedido.ABERTO && status !== statusPedido.FINALIZADO && status !== statusPedido.PENDENTE) {
+        return res.status(400).json({ message: 'Status inválido' });
       }
-
-      const pedido = Pedido.editar({ status }, id);
-
-      const result = await pedidoRepositories.alterarStatusPedido(pedido);
-
-      if (result.affectedRows === 0) {
-        return res.status(400).json({message: "Erro ao atualizar o pedido. Pedido não encontrado.", data: result});
-      }
-
-      res.status(200).json({ result });
+      const resultado = await pedidoRepository.editarStatus({ id: idPedido, status: status });
+      return res.status(200).json({ message: 'Status do pedido atualizado com sucesso', resultado });
+    
     } catch (error) {
       console.log(error);
-      res.status(500).json({
-        message: "Ocorreu um erro no servidor",
-      });
+      res.status(500).json({ message: 'Erro no server', error: error.message });
     }
   },
-
-  deletarPedido: async (req, res) => {
+  
+  selecionar: async (req, res) => {
     try {
-      const id = Number(req.params.id);
-      const pedido = await pedidoRepositories.listarIDPedido(id);
-
-      if (!id || isNaN(id) || id <= 0) {
-        return res.status(400).json({message: "ID inválido."});
-      }
-      if (pedido.length === 0) {
-        return res.status(400).json({message: "Pedido não encontrado."});
-      }
-
-      const result = await pedidoRepositories.deletarPedido(id);
-
-      res.status(200).json({ result });
+      const resultado = await pedidoRepository.selecionar();
+      res.status(200).json({ resultado });
+    
     } catch (error) {
       console.log(error);
-      res.status(500).json({message: "Ocorreu um erro no servidor"});
-    }
-  },
-
-  listarItens: async (req, res) => {
-    try {
-      const id = Number(req.params.id);
-      const result = await pedidoRepositories.listarItens(id);
-
-      if (result.length === 0) {
-        return res.status(200).json({message: "Essa tabela esta vazia.", data: result});
-      }
-
-      res.status(200).json({ result });
-
-    } catch (error) {
-      console.log(error);
-      res.status(500).json({message: "Ocorreu um erro no servidor"});
-    }
-  },
-
-  listarIDItem: async (req, res) => {
-    try {
-      const id = Number(req.params.id);
-      const result = await pedidoRepositories.listarIDItem(id);
-
-      if (result.length === 0) {
-        return res.status(200).json({message: "ID incorreto ou não existente", data: result});
-      }
-
-      res.status(200).json({ result });
-
-    } catch (error) {
-      console.log(error);
-      res.status(500).json({message: "Ocorreu um erro no servidor"});
-    }
-  },
-  alterarItem: async (req, res) => {
-    try {
-      const itemId = Number(req.params.itemId ?? req.params.id);
-      const { idProduto, quantidade, valorItem } = req.body;
-
-      const item = ItensPedido.editar({ idProduto, quantidade, valorItem }, itemId);
-
-      const { pedidoId } = await pedidoRepositories.alterarItem(itemId, item);
-
-      const itensRows = await pedidoRepositories.listarItensPorPedido(pedidoId);
-      const itensParaCalculo = itensRows.map(r => ({ quantidade: r.quantidade, valorItem: Number(r.valorItem) }));
-      const novoSubtotal = ItensPedido.calcularSubTotal(itensParaCalculo);
-
-      await pedidoRepositories.atualizarSubtotalPedido(pedidoId, novoSubtotal);
-
-      return res.status(200).json({ pedidoId, novoSubtotal });
-    } catch (error) {
-      console.log(error);
-      res.status(500).json({message: "Ocorreu um erro no servidor", error: error.message});
+      res.status(500).json({ message: 'Erro no server', error: error.message });
     }
   }
 };

@@ -3,10 +3,9 @@ import categoriaController from "../controllers/categoria.controller.js";
 
 const categoriaRoutes = Router();
 
-categoriaRoutes.get("/", categoriaController.listarCategorias);
-categoriaRoutes.get("/:id", categoriaController.listarIdCategoria);
-categoriaRoutes.post("/", categoriaController.criarCategoria);
-categoriaRoutes.put("/:id", categoriaController.alterarCategoria);
-categoriaRoutes.delete("/:id", categoriaController.deletarCategoria);
+categoriaRoutes.post('/', categoriaController.criar);
+categoriaRoutes.put('/:id', categoriaController.atualizar);
+categoriaRoutes.get('/', categoriaController.selecionar)
+categoriaRoutes.delete('/:id', categoriaController.deletar);
 
 export default categoriaRoutes;

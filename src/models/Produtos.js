@@ -2,20 +2,19 @@ export class Produtos {
   #id;
   #idCategoria;
   #nome;
-  #descricao;
   #preco;
   #Imagem;
   #estoque;
+  #dataCad;
 
   // Contructor //
-  constructor(idCategoria, nome, descricao, preco, Imagem, estoque, id) {
-    this.idCategoria = idCategoria;
-    this.nome = nome;
-    this.descricao = descricao;
-    this.preco = preco;
-    this.Imagem = Imagem;
-    this.estoque = estoque;
-    this.id = id;
+  constructor(pIdCategoria, pNome, pPreco, pImagem, pEstoque, pId) {
+    this.idCategoria = pIdCategoria;
+    this.nome = pNome;
+    this.preco = pPreco;
+    this.Imagem = pImagem;
+    this.estoque = pEstoque;
+    this.id = pId;
   }
 
   // Getters //
@@ -29,10 +28,6 @@ export class Produtos {
 
   get nome() {
     return this.#nome;
-  }
-
-  get descricao() {
-    return this.#descricao;
   }
 
   get preco() {
@@ -63,11 +58,6 @@ export class Produtos {
     this.#nome = value;
   }
 
-  set descricao(value) {
-    this.#validarDescricao(value);
-    this.#descricao = value;
-  }
-
   set preco(value) {
     this.#validarPreco(value);
     this.#preco = value;
@@ -75,7 +65,7 @@ export class Produtos {
 
   set Imagem(value) {
     this.#validarImagem(value);
-    this.#Imagem = value || null;
+    this.#Imagem = value;
   }
 
   set estoque(value) {
@@ -85,54 +75,47 @@ export class Produtos {
 
   // Métodos auxiliares //
   #validarId(value) {
-    if (value !== null && value !== undefined && (isNaN(value) || Number(value) <= 0)) {
-      throw new Error("O valor do ID não corresponde ao esperado.");
+    if (value !== null && value !== undefined && value <= 0) {
+      throw new Error('O valor do ID não corresponde ao esperado.');
     }
   }
 
   #validarIdCategoria(value) {
-    if (!value || isNaN(value) || Number(value) <= 0) {
-      throw new Error("O valor do IdCategoria não corresponde ao esperado.");
+    if (value !== undefined && value !== null && value <= 0) {
+      throw new Error('O idCategoria deve ser maior que zero');
     }
   }
 
   #validarNome(value) {
-    if (!value || value.trim().length < 3 || value.trim().length > 45) {
-      throw new Error("O campo nome é obrigatório e deve ter entre três e quarenta e cinco caracteres.");
-    }
-  }
-
-  #validarDescricao(value) {
-    if (!value || value.trim().length < 5 || value.trim().length > 100) {
-      throw new Error("O campo descricao é obrigatório e deve ter entre cinco e cem caracteres.");
+    if (value !== undefined && (!value || value.trim().length < 3 || value.trim().length > 150)) {
+      throw new Error('O nome do produto deve ter entre 3 e 150 caracteres');
     }
   }
 
   #validarPreco(value) {
-    if (!value || isNaN(value) || Number(value) <= 0) {
-      throw new Error("O campo preco deve ser um número válido e maior do que zero.");
+    if (!value || value < 0) {
+      throw new Error("O preço do produto deve ser maior que zero.");
     }
   }
 
   #validarImagem(value) {
-    if (value && value.trim().length < 3) {
-      throw new Error("Verifique se o caminho da imagem está correto.");
+    if (value && value.trim().length < 5) {
+      throw new Error('O caminho da imagem deve ter pelo menos 5 caracteres');
     }
   }
 
   #validarEstoque(value) {
-    if (value === undefined || value === null || isNaN(value) || Number(value) < 0) {
-      throw new Error("O campo estoque deve conter um número válido maior ou igual a zero.");
+    if (value === null || value === undefined || !Number.isInteger(value) || value < 0) {
+      throw new Error('O estoque deve ser um número inteiro maior ou igual a zero');
     }
   }
 
-  //Desing Pattern
+  // Desing Pattern //
   static criar(dados) {
-    return new Produtos(dados.idCategoria, dados.nome, dados.descricao, dados.preco, dados.Imagem, dados.estoque, null);
+    return new Produtos(dados.idCategoria, dados.nome, dados.preco, dados.Imagem, dados.estoque, null);
   }
 
   static editar(dados, id) {
-    return new Produtos(
-      dados.idCategoria, dados.nome, dados.descricao, dados.preco, dados.Imagem, dados.estoque, id);
+    return new Produtos(dados.idCategoria, dados.nome, dados.preco, dados.Imagem, dados.estoque, id);
   }
 }
