@@ -5,6 +5,7 @@ export class ItensPedido {
   #quantidade;
   #valorItem;
 
+  // Contructor //
   constructor(pPedidoId, pIdProduto, pquantidade, pValorItem, pID) {
     this.#pedidoId = pPedidoId;
     this.#idProduto = pIdProduto;
@@ -13,7 +14,7 @@ export class ItensPedido {
     this.#id = pID;
   }
 
-  // Getters
+  // Getters //
   get id() {
     return this.#id;
   }
@@ -34,7 +35,7 @@ export class ItensPedido {
     return this.#valorItem;
   }
 
-  // Setters
+  // Setters //
   set id(value) {
     this.#validarId(value);
     this.#id = value;
@@ -60,33 +61,33 @@ export class ItensPedido {
     this.#valorItem = value;
   }
 
-  // Métodos auxiliares
+  // Métodos auxiliares //
   #validarId(value) {
     if (value && value <= 0) {
-      throw new Error("Verifique o ID informado");
+      throw new Error("Verifique o ID informado.");
     }
   }
   #validarPedidoId(value) {
     if (value !== null && value !== undefined && value <= 0) {
-      throw new Error("Verifique o ID do pedido informado");
+      throw new Error("Verifique o ID do pedido informado.");
     }
   }
 
   #validarProdutoId(value) {
     if (!value || value <= 0) {
-      throw new Error("Verifique o ID do produto informado");
+      throw new Error("Verifique o ID do produto informado.");
     }
   }
 
   #validarquantidade(value) {
     if (!value || value <= 0) {
-      throw new Error("Informe um quantidade válido");
+      throw new Error("Informe uma quantidade válida.");
     }
   }
 
   #validarValorItem(value) {
     if (!value || value <= 0) {
-      throw new Error("Informe um valor válido para o item");
+      throw new Error("Informe um valor válido para o item.");
     }
   }
 
@@ -96,16 +97,14 @@ export class ItensPedido {
     );
   }
 
-  // Factory Methods
+  // Factory Methods //
   static criar(dados) {
     return new ItensPedido(
-      dados.pedidoId, dados.idProduto, dados.quantidade, dados.valorItem, null
-    );
+      dados.pedidoId, dados.idProduto, dados.quantidade, dados.valorItem, null);
   }
 
   static editar(dados, id) {
     return new ItensPedido(
-      null, dados.idProduto, dados.quantidade, dados.valorItem, id
-    );
+      null, dados.idProduto, dados.quantidade, dados.valorItem, id);
   }
 }

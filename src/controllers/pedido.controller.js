@@ -9,17 +9,13 @@ const pedidoController = {
       const result = await pedidoRepositories.listarPedidos();
 
       if (result.length === 0) {
-        return res.status(200).json({
-          Message: "Essa tabela não contem registros",
-        });
+        return res.status(200).json({message: "Essa tabela não contem registros."});
       }
 
       res.status(201).json({ result });
     } catch (error) {
       console.log(error);
-      res.status(500).json({
-        message: "Ocorreu um erro no servidor",
-      });
+      res.status(500).json({message: "Ocorreu um erro no servidor."});
     }
   },
 
@@ -29,13 +25,13 @@ const pedidoController = {
       const result = await pedidoRepositories.listarIDPedido(id);
 
       if (result.length === 0) {
-        return res.status(200).json({message: "Esse ID não contem registro!"});
+        return res.status(200).json({message: "Esse ID não contem registros."});
       }
 
       res.status(201).json({ result });
     } catch (error) {
       console.log(error);
-      res.status(500).json({message: "Ocorreu um erro no servidor"});
+      res.status(500).json({message: "Ocorreu um erro no servidor."});
     }
   },
 
@@ -59,8 +55,7 @@ const pedidoController = {
       return res.status(200).json({ result });
     } catch (error) {
       console.log(error);
-      res.status(500).json({
-        message: "Ocorreu um erro no servidor",Error: error.message});
+      res.status(500).json({message: "Ocorreu um erro no servidor.", error: error.message});
     }
   },
 

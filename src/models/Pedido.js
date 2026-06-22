@@ -46,19 +46,19 @@ export class Pedido {
   // Métodos auxiliares //
   #validarId(value) {
     if (!value && value < 0) {
-      throw new Error("Verifique o ID informado");
+      throw new Error("Verifique o ID informado.");
     }
   }
 
   #validarStatus(value) {
     if (!value || typeof value !== "string") {
-      throw new Error("Status inválido");
+      throw new Error("Status inválido.");
     }
   }
 
   #validarSubTotal(value) {
     if (!value || value <= 0) {
-      throw new Error("Não foi possivel obter o subtotal");
+      throw new Error("Não foi possivel obter o subtotal.");
     }
   }
 
@@ -66,6 +66,7 @@ export class Pedido {
   static criar(dados) {
     return new Pedido(dados.subTotal, dados.status, null);
   }
+
   static editar(dados, id) {
     return new Pedido(null, dados.status, id);
   }

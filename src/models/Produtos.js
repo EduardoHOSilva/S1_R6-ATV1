@@ -7,6 +7,7 @@ export class Produtos {
   #Imagem;
   #estoque;
 
+  // Contructor //
   constructor(idCategoria, nome, descricao, preco, Imagem, estoque, id) {
     this.idCategoria = idCategoria;
     this.nome = nome;
@@ -17,17 +18,39 @@ export class Produtos {
     this.id = id;
   }
 
+  // Getters //
   get id() {
     return this.#id;
   }
 
+  get idCategoria() {
+    return this.#idCategoria;
+  }
+
+  get nome() {
+    return this.#nome;
+  }
+
+  get descricao() {
+    return this.#descricao;
+  }
+
+  get preco() {
+    return this.#preco;
+  }
+
+  get Imagem() {
+    return this.#Imagem;
+  }
+
+  get estoque() {
+    return this.#estoque;
+  }
+
+  // Setters //
   set id(value) {
     this.#validarId(value);
     this.#id = value;
-  }
-
-  get idCategoria() {
-    return this.#idCategoria;
   }
 
   set idCategoria(value) {
@@ -35,17 +58,9 @@ export class Produtos {
     this.#idCategoria = value;
   }
 
-  get nome() {
-    return this.#nome;
-  }
-
   set nome(value) {
     this.#validarNome(value);
     this.#nome = value;
-  }
-
-  get descricao() {
-    return this.#descricao;
   }
 
   set descricao(value) {
@@ -53,17 +68,9 @@ export class Produtos {
     this.#descricao = value;
   }
 
-  get preco() {
-    return this.#preco;
-  }
-
   set preco(value) {
     this.#validarPreco(value);
     this.#preco = value;
-  }
-
-  get Imagem() {
-    return this.#Imagem;
   }
 
   set Imagem(value) {
@@ -71,78 +78,61 @@ export class Produtos {
     this.#Imagem = value || null;
   }
 
-  get estoque() {
-    return this.#estoque;
-  }
-
   set estoque(value) {
     this.#validarEstoque(value);
     this.#estoque = value;
   }
 
+  // Métodos auxiliares //
   #validarId(value) {
     if (value !== null && value !== undefined && (isNaN(value) || Number(value) <= 0)) {
-      throw new Error("O valor do Id nao corresponde ao esperado");
+      throw new Error("O valor do ID não corresponde ao esperado.");
     }
   }
 
   #validarIdCategoria(value) {
     if (!value || isNaN(value) || Number(value) <= 0) {
-      throw new Error("O valor do IdCategoria não corresponde ao esperado");
+      throw new Error("O valor do IdCategoria não corresponde ao esperado.");
     }
   }
 
   #validarNome(value) {
     if (!value || value.trim().length < 3 || value.trim().length > 45) {
-      throw new Error("O campo nome e obrigatorio e deve ter entre 3 e 45 caracteres");
+      throw new Error("O campo nome é obrigatório e deve ter entre três e quarenta e cinco caracteres.");
     }
   }
 
   #validarDescricao(value) {
     if (!value || value.trim().length < 5 || value.trim().length > 100) {
-      throw new Error("O campo descricao e obrigatorio e deve ter entre 5 e 100 caracteres");
+      throw new Error("O campo descricao é obrigatório e deve ter entre cinco e cem caracteres.");
     }
   }
 
   #validarPreco(value) {
     if (!value || isNaN(value) || Number(value) <= 0) {
-      throw new Error("O campo preco deve ser um numero valido e maior do que 0");
+      throw new Error("O campo preco deve ser um número válido e maior do que zero.");
     }
   }
 
   #validarImagem(value) {
     if (value && value.trim().length < 3) {
-      throw new Error("Verifique se o caminho da imagem esta correto");
+      throw new Error("Verifique se o caminho da imagem está correto.");
     }
   }
 
   #validarEstoque(value) {
     if (value === undefined || value === null || isNaN(value) || Number(value) < 0) {
-      throw new Error("O campo estoque deve ser um numero valido e maior ou igual a 0");
+      throw new Error("O campo estoque deve conter um número válido maior ou igual a zero.");
     }
   }
 
+  //Desing Pattern
   static criar(dados) {
-    return new Produtos(
-      dados.idCategoria,
-      dados.nome,
-      dados.descricao,
-      dados.preco,
-      dados.Imagem,
-      dados.estoque,
-      null
-    );
+    return new Produtos(dados.idCategoria, dados.nome, dados.descricao, dados.preco, dados.Imagem, dados.estoque, null);
   }
 
   static editar(dados, id) {
     return new Produtos(
-      dados.idCategoria,
-      dados.nome,
-      dados.descricao,
-      dados.preco,
-      dados.Imagem,
-      dados.estoque,
-      id
-    );
+      dados.idCategoria, dados.nome, dados.descricao, dados.preco, dados.Imagem, dados.estoque, id);
   }
 }

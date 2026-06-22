@@ -10,14 +10,14 @@ const produtoController = {
       const result = await produtoRepositories.listar();
 
       if (result.length === 0) {
-        return res.status(200).json({message: "Produtos não existem nessa tabela"});
+        return res.status(200).json({message: "Produtos não existem nessa tabela."});
       }
 
       res.status(200).json({message: "Produtos Listados:", data: result});
 
     } catch (error) {
       console.log(error);
-      res.status(500).json({message: "Ocorreu um erro no servidor"});
+      res.status(500).json({message: "Ocorreu um erro no servidor."});
     }
   },
   listarIdProduto: async (req, res) => {
@@ -38,7 +38,7 @@ const produtoController = {
 
     } catch (error) {
       console.log(error);
-      res.status(500).json({message: "Ocorreu um erro no servidor"});
+      res.status(500).json({message: "Ocorreu um erro no servidor."});
     }
   },
 
@@ -47,7 +47,7 @@ const produtoController = {
       const { idCategoria, nome, descricao, preco, estoque } = req.body;
 
       if (!req.file) {
-        return res.status(400).json({message: "Arquivo de imagem não enviado"});
+        return res.status(400).json({message: "Arquivo de imagem não enviado."});
       }
       const Imagem = `uploads/images/${req.file.filename}`;
 
@@ -56,11 +56,11 @@ const produtoController = {
       });
 
       const result = await produtoRepositories.criar(produto);
-      res.status(201).json({message: "Produto criado com sucesso", data: result});
+      res.status(201).json({message: "Produto criado com sucesso.", data: result});
 
     } catch (error) {
       console.log(error);
-      res.status(400).json({message: "Ocorreu um erro no servidor", error: error.message});
+      res.status(400).json({message: "Ocorreu um erro no servidor.", error: error.message});
     }
   },
 
@@ -70,12 +70,12 @@ const produtoController = {
       let { idCategoria, nome, descricao, preco, estoque } = req.body;
 
       if (!id || isNaN(id) || Number(id) <= 0) {
-        return res.status(400).json({message: "Digite um id válido"});
+        return res.status(400).json({message: "Digite um ID válido."});
       }
 
       const produtoExistente = await produtoRepositories.listarId(id);
       if (produtoExistente.length === 0) {
-        return res.status(400).json({message: "Produto não encontrado"});
+        return res.status(400).json({message: "Produto não encontrado."});
       }
       const Imagem = `uploads/images/${req.file.filename}`; 
       const produto = Produtos.editar(
@@ -85,15 +85,15 @@ const produtoController = {
       const result = await produtoRepositories.alterar(produto);
 
       if (result.affectedRows === 0) {
-        return res.status(400).json({message: "Erro ao alterar produto"});
+        return res.status(400).json({message: "Erro ao alterar produto."});
       }
 
       console.log("Produto alterado", result);
-      res.status(200).json({message: "Produto alterado com sucesso", data: result});
+      res.status(200).json({message: "Produto alterado com sucesso.", data: result});
 
     } catch (error) {
       console.log(error);
-      res.status(400).json({message: "Ocorreu um erro no servidor", error: error.message});
+      res.status(400).json({message: "Ocorreu um erro no servidor.", error: error.message});
     }
   },
 
@@ -103,18 +103,18 @@ const produtoController = {
       const buscaId = await produtoRepositories.listarId(id);
 
       if (!id || buscaId.length === 0) {
-        return res.status(400).json({message: "Insira um Id válido"});
+        return res.status(400).json({message: "Insira um ID válido."});
       }
 
       const result = await produtoRepositories.deletar(id);
 
       console.log("Produto Deletado", result);
-      res.status(200).json({message: "Produto deletado!", data: result
+      res.status(200).json({message: "Produto deletado.", data: result
 
       });
     } catch (error) {
       console.log(error);
-      res.status(500).json({message: "Ocorreu um erro no servidor", error: error.message});
+      res.status(500).json({message: "Ocorreu um erro no servidor.", error: error.message});
     }
   },
 };
